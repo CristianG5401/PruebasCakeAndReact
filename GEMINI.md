@@ -1,41 +1,57 @@
-## Project Overview
+# Project Overview
 
-This is a PHP project that uses Docker to create a web server environment. The environment is composed of two services: an Nginx web server and a PHP-FPM service. The project name is "pruebas_cake_and_react", which suggests it's intended for testing CakePHP and React, although the current implementation is a simple "Hello World" in PHP.
+This is a CakePHP 3.10 project. It appears to be a standard CakePHP application skeleton, likely intended for developing a web application using PHP. The project uses Composer for dependency management and includes configurations for a web server (nginx), Docker, and Travis CI.
 
-**Technologies:**
+**Key Technologies:**
 
-* PHP 7.4
-* Nginx
-* Docker
+* **Framework:** CakePHP 3.10
+* **Language:** PHP >= 5.6
+* **Dependency Management:** Composer
+* **Database:** MySQL (default)
+* **Testing:** PHPUnit
+* **Code Style:** cakephp/cakephp-codesniffer
 
-**Architecture:**
+# Building and Running
 
-* **`docker-compose.yml`**: Defines the services, networks, and volumes for the Docker environment.
-* **`nginx.conf`**: Configures Nginx to serve PHP files using the PHP-FPM service.
-* **`index.php`**: The main entry point for the application.
+**1. Installation:**
 
-## Building and Running
+```bash
+composer install
+```
 
-To run this project, you need to have Docker and Docker Compose installed.
+**2. Configuration:**
 
-1. **Build and start the containers:**
+* Copy `config/.env.example` to `config/.env` and update the environment variables, especially the database credentials.
+* Alternatively, you can directly edit `config/app_local.php` to configure the database and other settings.
 
-    ```bash
-    docker-compose up -d
-    ```
+**3. Database Migration:**
 
-2. **Access the application:**
+```bash
+bin/cake migrations migrate
+```
 
-    Open your web browser and navigate to `http://localhost:8080`.
+**4. Running the Development Server:**
 
-3. **Stop the containers:**
+```bash
+bin/cake server
+```
 
-    ```bash
-    docker-compose down
-    ```
+The application will be available at `http://localhost:8765`.
 
-## Development Conventions
+**5. Running Tests:**
 
-* The web root is the root of the project directory.
-* The main application file is `index.php`.
-* Nginx is configured to handle PHP files through PHP-FPM.
+```bash
+composer test
+```
+
+# Development Conventions
+
+* **Code Style:** The project uses the `cakephp/cakephp-codesniffer` standard. You can check for violations with `composer cs-check` and fix them with `composer cs-fix`.
+* **Static Analysis:** The project uses `phpstan` for static analysis. You can run it with `composer stan`.
+* **Templates:** The application uses the `.ctp` template file extension.
+* **Directory Structure:** The project follows the standard CakePHP directory structure:
+  * `src/`: Application source code (Controllers, Models, Templates, etc.)
+  * `config/`: Configuration files
+  * `webroot/`: Publicly accessible files (CSS, JavaScript, images)
+  * `tests/`: Test cases
+  * `bin/`: Command-line tools
