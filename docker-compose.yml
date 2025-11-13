@@ -15,8 +15,9 @@ services:
 
   # Servicio de PHP-FPM
   php:
-    context: . # El contexto sigue siendo la raíz ('.')
-    dockerfile: ./docker/php/Dockerfile # Le decimos dónde está el Dockerfile
+    build:
+      context: . # El contexto sigue siendo la raíz ('.')
+      dockerfile: ./docker/php/Dockerfile # Le decimos dónde está el Dockerfile
     volumes:
       # Carpetas clave para el desarrollo en vivo.
       - ./config:/var/www/html/config
