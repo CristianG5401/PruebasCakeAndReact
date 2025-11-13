@@ -1,4 +1,4 @@
-version: "3.8" # versión de Docker Compose
+# https://devopscycle.com/blog/the-ultimate-docker-compose-cheat-sheet
 name: "pruebas_cake_and_react" # Nombre del proyecto
 
 services:
@@ -8,11 +8,18 @@ services:
     ports:
       - "8080:80" # Expone el puerto 8080 de tu máquina al puerto 80 del contenedor
     volumes:
-      - .:/var/www/html # Monta tu carpeta actual (con index.php) dentro del contenedor
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf # Monta nuestro archivo de config de Nginx
+      - ./webroot:/var/www/html/webroot # Sincroniza SOLO la carpeta 'webroot', que es lo único que Nginx necesita servir
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf # Monta archivo de config de Nginx
+    depends_on:
+      - php # Se asegura de que PHP inicie primero
 
   # Servicio de PHP-FPM
   php:
-    image: php:7.4-fpm # ¡La versión que pediste!
+    build: .
     volumes:
-      - .:/var/www/html # Monta la misma carpeta para que PHP pueda ver el index.php
+      # Carpetas clave para el desarrollo en vivo.
+      - ./config:/var/www/html/config
+      - ./src:/var/www/html/src
+      - ./webroot:/var/www/html/webroot
+      - ./tmp:/var/www/html/tmp
+      - ./logs:/var/www/html/logs
