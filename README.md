@@ -6,7 +6,7 @@ This is a full-stack project combining a CakePHP 3.10 backend with a React + Typ
 
 *   **Backend Framework:** CakePHP 3.10
 *   **Frontend Framework:** React 19.2.0
-*   **Language (Backend):** PHP >= 5.6
+*   **Language (Backend):** PHP >= 7.4
 *   **Language (Frontend):** TypeScript
 *   **Build Tool (Frontend):** Vite
 *   **Containerization:** Docker, Docker Compose
