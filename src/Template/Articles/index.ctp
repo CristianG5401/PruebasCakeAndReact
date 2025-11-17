@@ -1,3 +1,9 @@
+<?php $this->Html->script('custom-web-components/react-lib-bundle.es.js', [
+    'block' => true,
+    'type' => 'module',
+    'defer' => true
+]); ?>
+
 <h1>Articles</h1>
 <?= $this->Html->link('Add Article', ['action' => 'add']) ?>
 <table>
@@ -29,3 +35,11 @@
         </tr>
     <?php endforeach; ?>
 </table>
+
+<hr>
+<hr>
+<hr>
+
+<h2>React Components</h2>
+
+<hello-widget name="Cristian (¡Automatizado!)"></hello-widget>
