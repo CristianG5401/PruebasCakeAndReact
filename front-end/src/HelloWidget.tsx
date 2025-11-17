@@ -1,4 +1,8 @@
-function HelloWidget({ name = 'Mundo' }) {
+interface HelloWidgetProps {
+  name?: string;
+}
+
+function HelloWidget({ name = 'Mundo' }: HelloWidgetProps) {
   // Le ponemos un borde azul para ver el Shadow DOM en acción
   const style = {
     padding: '20px',

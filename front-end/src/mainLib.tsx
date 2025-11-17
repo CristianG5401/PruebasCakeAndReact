@@ -1,6 +1,6 @@
 import r2wc from "@r2wc/react-to-web-component";
 
-import HelloWidget from "./HelloWidget.jsx";
+import HelloWidget from "./HelloWidget";
 
 // Envolvemos el componente React
 const WcHello = r2wc(HelloWidget, {
