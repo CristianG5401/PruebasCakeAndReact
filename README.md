@@ -1,72 +1,167 @@
-# CakePHP Application Skeleton
+# Project Overview
 
-[![Build Status](https://img.shields.io/travis/cakephp/app/master.svg?style=flat-square)](https://travis-ci.org/cakephp/app)
-[![Total Downloads](https://img.shields.io/packagist/dt/cakephp/app.svg?style=flat-square)](https://packagist.org/packages/cakephp/app)
+This is a full-stack project combining a CakePHP 3.10 backend with a React + TypeScript frontend. The backend serves as a REST API, while the frontend is built as a web component library using Vite. The project uses Composer for PHP dependency management and npm for frontend packages. It includes configurations for a web server (nginx), Docker, and Travis CI.
 
-A skeleton for creating applications with [CakePHP](https://cakephp.org) 3.x.
+**Key Technologies:**
 
-The framework source code can be found here: [cakephp/cakephp](https://github.com/cakephp/cakephp).
+*   **Backend Framework:** CakePHP 3.10
+*   **Frontend Framework:** React 19.2.0
+*   **Language (Backend):** PHP >= 5.6
+*   **Language (Frontend):** TypeScript
+*   **Build Tool (Frontend):** Vite
+*   **Containerization:** Docker, Docker Compose
+*   **Dependency Management:** Composer (PHP), npm (Frontend)
+*   **Database:** MySQL (default)
+*   **Testing:** PHPUnit
+*   **Code Style:** cakephp/cakephp-codesniffer, ESLint
 
-## Development with Docker
+# Building and Running
 
-This project is configured to run in a Docker environment.
+**1. Initial Setup:**
 
-### Prerequisites
-
-*   Docker
-*   Docker Compose
-
-### Starting the Environment
-
-1.  Build and start the containers in detached mode:
-
+*   **Backend Dependencies:**
     ```bash
-    docker-compose up -d --build
+    composer install
+    ```
+*   **Frontend Dependencies:**
+    ```bash
+    cd front-end
+    npm install
     ```
 
-2.  Access the application in your browser at [http://localhost:8080](http://localhost:8080).
+**2. Configuration:**
 
-### Stopping the Environment
+*   Copy `config/.env.example` to `config/.env` and update the environment variables, especially the database credentials.
 
-To stop the containers, run:
-
-```bash
-docker-compose down
-```
-
-## Installation (Without Docker)
-
-1. Download [Composer](https://getcomposer.org/doc/00-intro.md) or update `composer self-update`.
-2. Run `php composer.phar create-project --prefer-dist cakephp/app [app_name]`.
-
-If Composer is installed globally, run
+**3. Start the Development Environment:**
 
 ```bash
-composer create-project --prefer-dist "cakephp/app:^3.8"
+docker-compose up -d
 ```
 
-In case you want to use a custom app dir name (e.g. `/myapp/`):
+The application will be available at `http://localhost:8080`. See the "Docker Development Environment" section for more details.
+
+**4. Database Migration:**
 
 ```bash
-composer create-project --prefer-dist "cakephp/app:^3.8" myapp
+docker-compose exec php bin/cake migrations migrate
 ```
 
-You can now either use your machine's webserver to view the default home page, or start
-up the built-in webserver with:
+# Docker Development Environment
+
+The development environment is managed with Docker Compose. Here are some common commands:
+
+*   **Start the environment in detached mode:**
+    ```bash
+    docker-compose up -d
+    ```
+
+*   **Stop the environment:**
+    ```bash
+    docker-compose down
+    ```
+
+*   **View logs for all services:**
+    ```bash
+    docker-compose logs -f
+    ```
+
+*   **View logs for a specific service:**
+    ```bash
+    docker-compose logs -f php
+    ```
+
+*   **Run a command inside a service container:**
+    This is useful for running CakePHP commands, Composer, or accessing the shell.
+    ```bash
+    docker-compose exec <service_name> <command>
+    ```
+    *Example: Accessing the shell of the `php` container:*
+    ```bash
+    docker-compose exec php /bin/bash
+    ```
+    *Example: Running CakePHP's routes command:*
+    ```bash
+    docker-compose exec php bin/cake routes
+    ```
+
+*   **Rebuild images:**
+    If you make changes to a `Dockerfile`, you'll need to rebuild the image.
+    ```bash
+    docker-compose build
+    ```
+
+# Keeping `vendor` Folder Updated for IDE/Linter
+
+To ensure your local IDE (e.g., PhpStorm, VS Code) and PHP linters (like PHPStan or Code Sniffer) can correctly resolve dependencies and provide autocompletion, you can copy the `vendor` directory from the running `php` Docker container to your local project.
+
+**1. Ensure your containers are running:**
 
 ```bash
-bin/cake server -p 8765
+docker-compose up -d
 ```
 
-Then visit `http://localhost:8765` to see the welcome page.
+**2. Execute the Docker `cp` (copy) command:**
 
-## Configuration
+```bash
+docker-compose cp php:/var/www/html/vendor ./vendor
+```
 
-Read and edit `config/app.php` and setup the `'Datasources'` and any other
-configuration relevant for your application.
+**What this command does:**
 
-## Layout
+*   `docker-compose cp`: This is the copy command.
+*   `php:/var/www/html/vendor`: This specifies the source. It tells Docker to go into the `php` container and locate the `/var/www/html/vendor` directory.
+*   `./vendor`: This is the destination. It tells Docker to copy that directory to your current local directory (`.`) as `vendor`.
 
-The app skeleton uses a subset of [Foundation](http://foundation.zurb.com/) (v5) CSS
-framework by default. You can, however, replace it with any other library or
-custom styles.
+**Result:**
+
+*   You will have a local `vendor` folder.
+*   Your IDE will be able to resolve PHP classes and provide autocompletion.
+*   Your local PHP linters will function correctly.
+
+**Important Note:** This local `vendor` folder is *only* for your editor's benefit. The `php` container will continue to use its own internal `vendor` folder for application execution.
+
+**Warning:** If you update your Composer dependencies in the future (e.g., by running `docker-compose exec php composer update`), you will need to delete your local `vendor` folder (`rm -rf ./vendor`) and re-run the `docker-compose cp` command to get the updated version.
+
+# Frontend Development
+
+The frontend is a Vite-powered React application.
+
+*   **Run the frontend development server:**
+    ```bash
+    cd front-end
+    npm run dev
+    ```
+    The frontend will be available at `http://localhost:5173` with hot-reloading.
+
+*   **Build for Production:**
+    ```bash
+    cd front-end
+    npm run build
+    ```
+    This command compiles the React application into a web component, which is saved in `webroot/js/custom-web-components/`. This component can then be used in the CakePHP templates.
+
+# Testing
+
+*   **Backend Tests:**
+    Run PHPUnit tests inside the `php` container:
+    ```bash
+    docker-compose exec php vendor/bin/phpunit
+    ```
+
+# Development Conventions
+
+*   **Code Style (Backend):** The project uses the `cakephp/cakephp-codesniffer` standard.
+    *   Check: `composer cs-check`
+    *   Fix: `composer cs-fix`
+*   **Code Style (Frontend):** The project uses ESLint.
+*   **Static Analysis (Backend):** The project uses `phpstan`.
+    *   Run: `composer stan`
+*   **Directory Structure:**
+    *   `src/`: Backend source code (Controllers, Models, Templates, etc.)
+    *   `front-end/`: Frontend source code (React, TypeScript, Vite)
+    *   `docker/`: Docker configuration files
+    *   `config/`: Application configuration files
+    *   `webroot/`: Publicly accessible files
+    *   `tests/`: Test cases
+    *   `bin/`: Command-line tools
