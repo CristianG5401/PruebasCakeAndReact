@@ -4,7 +4,7 @@ name: "pruebas_cake_and_react" # Nombre del proyecto
 services:
   # Servicio del servidor web Nginx
   server:
-    image: nginx:latest
+    image: nginx:stable
     ports:
       - "8080:80" # Expone el puerto 8080 de tu máquina al puerto 80 del contenedor
     volumes:
